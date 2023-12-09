@@ -10,6 +10,7 @@ docker compose up -d
 #Prisma commands
 ```
 npx prisma init
-npx prisma migrate dev
-npx primsa generate
+npx prisma migrate dev #crea los modelos a partir de una basde de datos existente
+npx primsa generate #purga la base de datos y crea la nueva estructura a partir del modelo
+npx prisma db push #agrega columnas del modelo a la base de datos
 ```

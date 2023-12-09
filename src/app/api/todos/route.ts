@@ -5,7 +5,7 @@
 import {NextResponse} from "next/server";
 import prisma from "@/lib/prisma";
 import * as yup from 'yup'
-import {todoPOST} from "@/yup/schemas";
+import {todoDelete, todoPOST} from "@/yup/schemas";
 export async function GET(request: Request) {
     const {searchParams} = new URL(request.url)
     const take= searchParams.get('take')??'10';
@@ -23,7 +23,11 @@ export async function GET(request: Request) {
 
     const todos = await prisma.todo.findMany({
         take:+take,
-        skip:+skip
+        skip:+skip,
+        orderBy:{
+            createdAt:'asc'
+        }
+
     });
     return NextResponse.json({
         todos
@@ -38,6 +42,18 @@ export async function POST(request: Request) {
     }catch (e){
         return NextResponse.json({e},{status:400})
     }
+}
+export async function DELETE(request: Request) {
+    try{
+        const {complete} =await todoDelete.validate(await  request.json());
 
-
+        if(complete){
+            await  prisma.todo.deleteMany({where:{complete:true}});
+        }else{
+            await  prisma.todo.deleteMany();
+        }
+        return NextResponse.json({success:true})
+    }catch (e){
+        return NextResponse.json({e},{status:400})
+    }
 }
